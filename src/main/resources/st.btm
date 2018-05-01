@@ -1,0 +1,15 @@
+RULE init server
+CLASS com.megacrit.cardcrawl.core.CardCrawlGame
+METHOD create()
+AT ENTRY
+IF TRUE
+DO stshelper.MyHelper.startServer()
+ENDRULE
+
+RULE card reward
+CLASS com.megacrit.cardcrawl.dungeons.AbstractDungeon
+METHOD getRewardCards()
+AT EXIT
+IF TRUE
+DO stshelper.MyHelper.returnCards($!)
+ENDRULE
