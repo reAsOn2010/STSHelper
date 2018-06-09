@@ -38,9 +38,10 @@ public class MyHelper {
             boolean isChanged = false;
             for (AbstractCard card: original) {
                 if (card.rarity == target.rarity) {
-                    if (card.upgraded) {
-                        target.upgrade();
-                    }
+                    // if (card.upgraded) {
+                    //     target.upgrade();
+                    // }
+                    target.upgrade();
                     original.remove(card);
                     original.add(target);
                     isChanged = true;
@@ -49,9 +50,10 @@ public class MyHelper {
             }
             if (!isChanged) {
                 AbstractCard card = original.remove(0);
-                if (card.upgraded) {
-                    target.upgrade();
-                }
+                // if (card.upgraded) {
+                //     target.upgrade();
+                // }
+                target.upgrade();
                 original.add(target);
             }
         }

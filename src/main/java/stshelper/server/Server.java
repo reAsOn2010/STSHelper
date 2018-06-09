@@ -7,6 +7,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.logging.log4j.util.Strings;
 import stshelper.MyHelper;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class Server {
 
@@ -24,6 +27,7 @@ public class Server {
 
     public Server () {
         try {
+            System.out.println("starting server");
             HttpServer server = HttpServer.create(new InetSocketAddress(27999), 0);
             server.createContext("/list-cards", new ListCardsHandler());
             server.createContext("/hack-card", new HackCardHandler());
@@ -43,11 +47,14 @@ public class Server {
             }
             Headers headers = httpExchange.getResponseHeaders();
             headers.set("Content-Type", "application/json; charset=UTF-8");
-            Map<String, String> map = new HashMap<String, String>();
+            Map<String, Map<String, String>> map = new HashMap<String, Map<String,String>>();
             for (Integer i = 0; i < cards.size(); i++) {
-                map.put(i.toString(), cards.get(i).name);
+                Map<String, String> detail = new HashMap();
+                detail.put("name", cards.get(i).name);
+                detail.put("desc", cards.get(i).description.stream().map(x -> x.text).collect(Collectors.joining("|")));
+                map.put(i.toString(), detail);
             }
-            byte[] response = gson.toJson(map).getBytes();
+            byte[] response = gson.toJson(map).getBytes("UTF-8");
             httpExchange.sendResponseHeaders(200, response.length);
             OutputStream os = httpExchange.getResponseBody();
             os.write(response);
